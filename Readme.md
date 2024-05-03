@@ -6,15 +6,21 @@
 4. Use postman to communicate with the blockchain:
 
 [POST] http://localhost:500X/api/v1/members/register-node
+
 {
 "nodeUrl": "http://localhost:500X"
 }
+
 [GET] http://localhost:500X/api/v1/members
+
 [GET] http://localhost:500X/api/v1/blockchain
+
 [POST] http://localhost:500X/api/v1/blockchain/mine
+
 {
 "productName": "Råglimpa"
 }
+
 [GET] http://localhost:500X/api/v1/blockchain/consensus
 
 (X = 1, 2 or 3 depening on server/node)
