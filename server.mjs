@@ -1,9 +1,29 @@
 import express from 'express';
+import blockchainRouter from './routes/blockchain-routes.mjs';
 import { startup } from './utilities/blockchain-boot.mjs';
+import { logger } from './middleware/logger.mjs';
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { ErrorResponse } from './utilities/ErrorResponseModel.mjs';
+import { errorHandler } from './middleware/errorhandler.mjs';
 
 const app = express();
 
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
+
+global.__appdir = dirname;
+
 app.use(express.json());
+app.use(logger);
+app.use('/api/v1/blockchain', blockchainRouter);
+
+app.all('*', (req, res, next) => {
+  next(new ErrorResponse(`Kunde inte hitta resursen ${req.originalUrl}`, 404));
+});
+
+app.use(errorHandler);
 
 const PORT = process.argv[2];
 

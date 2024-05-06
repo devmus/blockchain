@@ -1,2 +1,5 @@
 node_modules
 config/config.env
+.vscode
+logs/app.log
+logs/error.log
