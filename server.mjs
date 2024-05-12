@@ -1,6 +1,7 @@
 import express from 'express';
 import blockchainRouter from './routes/blockchain-routes.mjs';
-import { startup } from './utilities/blockchain-boot.mjs';
+import memberRouter from './routes/member-routes.mjs';
+import { startup } from './services/blockchain-boot.mjs';
 import { logger } from './middleware/logger.mjs';
 
 import path from 'path';
@@ -18,6 +19,7 @@ global.__appdir = dirname;
 app.use(express.json());
 app.use(logger);
 app.use('/api/v1/blockchain', blockchainRouter);
+app.use('/api/v1/members', memberRouter);
 
 app.all('*', (req, res, next) => {
   next(new ErrorResponse(`Kunde inte hitta resursen ${req.originalUrl}`, 404));

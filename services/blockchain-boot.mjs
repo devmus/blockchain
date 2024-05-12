@@ -1,3 +1,9 @@
+import {
+  initializeBlockchain,
+  synchronizeChain,
+} from '../controllers/blockchain-controller.mjs';
+import { readFile } from './fileHandler.mjs';
+
 const serverUrl = process.argv[3];
 
 export const startup = (PORT) => {
@@ -41,7 +47,7 @@ export const startup = (PORT) => {
 
 • Create block:
 [POST] ${serverUrl}/api/v1/blockchain/mine
-{ "productName": "Råglimpa" }
+{ "amount": 5, "recipient": "Saylor" }
 
 • Reach consensus:
 [GET] ${serverUrl}/api/v1/blockchain/consensus
@@ -51,4 +57,5 @@ Waiting for input...
       );
     }
   }, increment);
+  initializeBlockchain();
 };

@@ -1,13 +1,8 @@
-import { createFiles } from '../utilities/createFiles.mjs';
+import { checkEntry, createFiles } from '../services/fileHandler.mjs';
 
 export const logger = (req, res, next) => {
-  writeToFile(req);
+  const time = new Date().toLocaleTimeString('sv-SE');
 
-  printToTerminal(req);
-  next();
-};
-
-const writeToFile = (req) => {
   const message = `${req.method} ${
     req.originalUrl
   } - ${new Date().toLocaleDateString(
@@ -16,14 +11,26 @@ const writeToFile = (req) => {
 
   const loggerFile = 'app.log';
   const folder = 'logs';
-  createFiles(message, folder, loggerFile);
+
+  const shouldSkipLogging = checkEntry(message, folder, loggerFile, time);
+
+  if (!shouldSkipLogging) {
+    createFiles(message, folder, loggerFile);
+    printToTerminal(req);
+  }
+
+  next();
 };
 
 const printToTerminal = (req) => {
   console.log(
-    `// User input //`,
-    `${new Date().toLocaleDateString('sv-SE')}`,
-    `${new Date().toLocaleTimeString('sv-SE')}`
+    `// // // Input // // //
+----------------------
+${process.argv[3]}
+${new Date().toLocaleDateString('sv-SE')} ${new Date().toLocaleTimeString(
+      'sv-SE'
+    )}
+----------------------`
   );
 
   const url = req.originalUrl;
@@ -45,15 +52,22 @@ const printToTerminal = (req) => {
     case '/api/v1/blockchain/consensus':
       endpoint = '• Reach consensus:';
       break;
+    case '/api/v1/blockchain/block/broadcast':
+      endpoint = '• Blockchain updated:';
+      break;
     default:
       endpoint = '>!< Endpoint not recognized. >!<';
   }
 
   console.log(`${endpoint}`);
 
-  if (req.method === 'POST') {
-    console.log(`[${req.method}]`, req.body, `\n`);
+  if (req.method === 'POST' && endpoint !== '• Blockchain updated:') {
+    console.log(`[${req.method}]`, req.body);
   } else {
-    console.log(`[${req.method}]\n`);
+    console.log(`[${req.method}]`);
   }
+  console.log(
+    `----------------------
+\\\\ \\\\ \\\\ \\\\ \\\\ \\\\ \\\\ \\\\`
+  );
 };
